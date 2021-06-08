@@ -92,26 +92,18 @@ def update():
 
 def get_products_from_api():
     global product
-    page = 1
     # Send request from API.
     result = requests.get(
-        "https://fr.openfoodfacts.org/cgi/search.pl?page_size=1000&page={}&action=process&json=1".format(page)).json()
-    pagemax = 2
-    print(pagemax)
-    while page < pagemax:
-        for element in result['products']:
-            # Check for data matching
-            if not all(tag in element for tag in ("id", "product_name", "generic_name", "packaging", "brands",
-                                                  "packaging", "categories_tags", "stores", "nutrition_grade_fr",
-                                                  "url")):
-                continue
-            product.append(DbProducts(element['id'], element['product_name'], element['generic_name'],
-                                      element['packaging'], element['brands'],
-                                      element['categories'], element['stores'],
-                                      element['nutrition_grade_fr'], element['url']))
-        page += 1
-        print(len(product), " produits.")
-        print("Etape :", page, "/", pagemax)
+        "https://fr.openfoodfacts.org/cgi/search.pl?page_size=1000&page={}&action=process&json=1").json()
+    for element in result['products']:
+        if not all(tag in element for tag in ("id", "product_name", "generic_name", "packaging", "brands",
+                                              "packaging", "categories_tags", "stores", "nutrition_grade_fr",
+                                              "url")):
+            continue
+        product.append(DbProducts(element['id'], element['product_name'], element['generic_name'],
+                                  element['packaging'], element['brands'],
+                                  element['categories'], element['stores'],
+                                  element['nutrition_grade_fr'], element['url']))
     save_products()
 
 
